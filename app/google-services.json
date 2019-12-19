@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1051636829749",
+    "firebase_url": "https://segdepositobelico.firebaseio.com",
+    "project_id": "segdepositobelico",
+    "storage_bucket": "segdepositobelico.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1051636829749:android:b0cd6c7d519bc60052eb7c",
+        "android_client_info": {
+          "package_name": "com.example.segurancabelica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1051636829749-414qbeej0mjgds73qnc4bs51s6o53e9q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.segurancabelica",
+            "certificate_hash": "63835e2385f793fd386a892dfc954799a95bf96a"
+          }
+        },
+        {
+          "client_id": "1051636829749-ru8lc63lvk3vcc6d06tlrv2jv0oh8dg8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOF1KTkfWngrSsYTgZ9g0i1UizRHyYBa4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1051636829749-ru8lc63lvk3vcc6d06tlrv2jv0oh8dg8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
