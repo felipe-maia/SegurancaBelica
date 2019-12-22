@@ -1,4 +1,4 @@
-package com.example.segurancabelica;
+package com.example.segurancabelica.classes;
 
 public class Usuario {
 

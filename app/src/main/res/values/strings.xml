@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SegurancaBelica</string>
+    <string name="login">Login</string>
+    <string name="cadastrar">Cadastrar</string>
 </resources>
