@@ -1,12 +1,18 @@
 package com.example.segurancabelica.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.segurancabelica.R;
+import com.example.segurancabelica.config.ConfigFirebase;
+import com.example.segurancabelica.model.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,31 +24,39 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-    private FirebaseAuth user = FirebaseAuth.getInstance();
+    private FirebaseAuth autenticacao;
+    private Button btToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        btToken = findViewById(R.id.btActivityToken);
 
-        DatabaseReference usuarios = reference.child("usuarios"); // referencia da tabela
+        btToken.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                abrirAtivityToken();
+            }
+        });
+
+        //DatabaseReference usuarios = reference.child("usuarios"); // referencia da tabela
 
         //pesquisas
         //Query usuarioPesquisa = usuarios.orderByChild("nome").equalTo("Felipe");
         //limitando primeiros 3 usuarios
         //Query usuarioPesquisa = usuarios.orderByKey().limitToFirst(3);
 
-        Query usuarioPesquisa = usuarios.orderByChild ("nome").startAt("F").endAt("G" + "/utf8ff");
+        //Query usuarioPesquisa = usuarios.orderByChild("nome").startAt("F").endAt("G" + "/utf8ff");
         //Query usuarioPesquisa = usuarios.orderByChild ("nome").startAt("L");
 
 
-
-
+        /*
         usuarioPesquisa.addValueEventListener(new ValueEventListener() { // listener da tabela referenciada
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) { // capta qualquer alteração no DB e atualiza app
 
-                Log.i("pesquisa","usuario "+ dataSnapshot.getValue().toString());
+                Log.i("pesquisa", "usuario " + dataSnapshot.getValue().toString());
             }
 
             @Override
@@ -51,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*//identificador unico
+        //identificador unico
         Usuario usuario = new Usuario();
         usuario.setNome("Fernanda");
         usuario.setPosto("1Ten");
@@ -132,4 +146,11 @@ public class MainActivity extends AppCompatActivity {
         */
 
     }
+
+    private void abrirAtivityToken() {
+        startActivity(new Intent(this, TokenNovoCadastroActivity.class));
+        finish();
+    }
+
+
 }
