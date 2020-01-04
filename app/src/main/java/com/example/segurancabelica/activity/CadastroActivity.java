@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.segurancabelica.R;
 import com.example.segurancabelica.config.ConfigFirebase;
 import com.example.segurancabelica.helper.Base64Custom;
+import com.example.segurancabelica.model.TokenUsuarioNovo;
 import com.example.segurancabelica.model.Usuario;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -20,12 +21,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class CadastroActivity extends AppCompatActivity {
 
+    private DatabaseReference reference = ConfigFirebase.getDataBase();
     private EditText edNome, edEmail, edPosto, edSenha, edToken;
     private Button btCadastrar;
     private FirebaseAuth autenticacao;
+    private TokenUsuarioNovo buscaUltimoToken;
     private Usuario usuario;
 
     @Override
@@ -43,11 +51,11 @@ public class CadastroActivity extends AppCompatActivity {
         btCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String textNome = edNome.getText().toString();
-                String textPosto = edPosto.getText().toString();
-                String textEmail = edEmail.getText().toString();
-                String textSenha = edSenha.getText().toString();
-                String textToken = edToken.getText().toString();
+                final String textNome = edNome.getText().toString();
+                final String textPosto = edPosto.getText().toString();
+                final String textEmail = edEmail.getText().toString();
+                final String textSenha = edSenha.getText().toString();
+                final String textToken = edToken.getText().toString();
 
                 if (textNome.isEmpty()) {
                     Toast.makeText(CadastroActivity.this, "Preencha o campo nome!", Toast.LENGTH_SHORT).show();
@@ -64,14 +72,12 @@ public class CadastroActivity extends AppCompatActivity {
                                 if (textToken.isEmpty()) {
                                     Toast.makeText(CadastroActivity.this, "Preencha o campo token!", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    
-
-
                                     usuario = new Usuario();
                                     usuario.setNome(textNome);
                                     usuario.setEmail(textEmail);
                                     usuario.setSenha(textSenha);
-                                    cadastrarUsuario();
+                                    usuario.setPosto(textPosto);
+                                    buscaUltimoToken();
                                 }
                             }
                         }
@@ -82,7 +88,39 @@ public class CadastroActivity extends AppCompatActivity {
 
     }
 
+    public void buscaUltimoToken(){
+        buscaUltimoToken = new TokenUsuarioNovo();
+        DatabaseReference tokenDB = reference.child("tokenUser"); // referencia da tabela
+        Query queryUltimoToken = tokenDB.orderByKey().limitToLast(1);
+
+        queryUltimoToken.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                    buscaUltimoToken = postSnapshot.getValue(TokenUsuarioNovo.class);
+                    buscaUltimoToken.setKey(postSnapshot.getKey());
+                }
+                if (buscaUltimoToken.isStatus()) {
+                    Toast.makeText(CadastroActivity.this, "Token já utilizado!", Toast.LENGTH_SHORT).show();
+                    //esta caindo no else
+                    //Log.i("teste token", "token: " + buscaUltimoToken.getKey());
+                }else {
+                    usuario.setPermissao(buscaUltimoToken.getNivelPermissao());
+                    usuario.setCodigoCartao(buscaUltimoToken.getCodigoCartao());
+                    cadastrarUsuario();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void cadastrarUsuario() {
+
         autenticacao = ConfigFirebase.getAutenticacao();
         autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -91,6 +129,9 @@ public class CadastroActivity extends AppCompatActivity {
                     String idUsuario = Base64Custom.codificarBase64(usuario.getEmail());
                     usuario.setIdUsuario(idUsuario);
                     usuario.salvar();
+                    buscaUltimoToken.setStatus(true);
+                    DatabaseReference tokenDB = reference.child("tokenUser"); // referencia da tabela
+                    tokenDB.child(buscaUltimoToken.getKey()).setValue(buscaUltimoToken);
                     finish();
                 } else {
                     String excecao = "";

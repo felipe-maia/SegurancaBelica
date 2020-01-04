@@ -9,7 +9,7 @@ public class Usuario {
     private String idUsuario;
     private String nome;
     private String posto;
-    private int permissao;
+    private String permissao;
     private String email;
     private String senha;
     private String codigoCartao;
@@ -20,7 +20,14 @@ public class Usuario {
     public void salvar(){
         DatabaseReference reference = ConfigFirebase.getDataBase();
         reference.child("usuarios").child(this.idUsuario).setValue(this);
+    }
 
+    public String getCodigoCartao() {
+        return codigoCartao;
+    }
+
+    public void setCodigoCartao(String codigoCartao) {
+        this.codigoCartao = codigoCartao;
     }
 
     public String getNome() {
@@ -39,11 +46,11 @@ public class Usuario {
         this.posto = posto;
     }
 
-    public int getPermissao() {
+    public String getPermissao() {
         return permissao;
     }
 
-    public void setPermissao(int permissao) {
+    public void setPermissao(String permissao) {
         this.permissao = permissao;
     }
 
