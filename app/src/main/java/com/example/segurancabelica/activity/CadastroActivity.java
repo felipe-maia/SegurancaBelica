@@ -30,6 +30,8 @@ import com.google.firebase.database.ValueEventListener;
 public class CadastroActivity extends AppCompatActivity {
 
     private DatabaseReference reference = ConfigFirebase.getDataBase();
+    private DatabaseReference tokenDB = reference.child("tokenUser");
+    //private ValueEventListener valueEventListenerTokenDB;
     private EditText edNome, edEmail, edPosto, edSenha, edToken;
     private Button btCadastrar;
     private FirebaseAuth autenticacao;
@@ -47,7 +49,11 @@ public class CadastroActivity extends AppCompatActivity {
         edSenha = findViewById(R.id.editSenha);
         edToken = findViewById(R.id.editToken);
         btCadastrar = findViewById(R.id.btEntrar);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         btCadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +83,7 @@ public class CadastroActivity extends AppCompatActivity {
                                     usuario.setEmail(textEmail);
                                     usuario.setSenha(textSenha);
                                     usuario.setPosto(textPosto);
-                                    buscaUltimoToken();
+                                    buscaUltimoToken(textToken);
                                 }
                             }
                         }
@@ -88,27 +94,29 @@ public class CadastroActivity extends AppCompatActivity {
 
     }
 
-    public void buscaUltimoToken(){
+    public void buscaUltimoToken(final String textToken) {
         buscaUltimoToken = new TokenUsuarioNovo();
-        DatabaseReference tokenDB = reference.child("tokenUser"); // referencia da tabela
+
         Query queryUltimoToken = tokenDB.orderByKey().limitToLast(1);
 
-        queryUltimoToken.addValueEventListener(new ValueEventListener() {
+        queryUltimoToken.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     buscaUltimoToken = postSnapshot.getValue(TokenUsuarioNovo.class);
                     buscaUltimoToken.setKey(postSnapshot.getKey());
                 }
                 if (buscaUltimoToken.isStatus()) {
                     Toast.makeText(CadastroActivity.this, "Token já utilizado!", Toast.LENGTH_SHORT).show();
-                    //esta caindo no else
-                    //Log.i("teste token", "token: " + buscaUltimoToken.getKey());
-                }else {
-                    usuario.setPermissao(buscaUltimoToken.getNivelPermissao());
-                    usuario.setCodigoCartao(buscaUltimoToken.getCodigoCartao());
-                    cadastrarUsuario();
+                } else {
+                    if (buscaUltimoToken.getToken().equals(textToken)) {
+                        usuario.setPermissao(buscaUltimoToken.getNivelPermissao());
+                        usuario.setCodigoCartao(buscaUltimoToken.getCodigoCartao());
+                        cadastrarUsuario();
+                    } else {
+                        Toast.makeText(CadastroActivity.this, "Token incorreto!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
@@ -120,7 +128,6 @@ public class CadastroActivity extends AppCompatActivity {
     }
 
     public void cadastrarUsuario() {
-
         autenticacao = ConfigFirebase.getAutenticacao();
         autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha()).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -130,7 +137,6 @@ public class CadastroActivity extends AppCompatActivity {
                     usuario.setIdUsuario(idUsuario);
                     usuario.salvar();
                     buscaUltimoToken.setStatus(true);
-                    DatabaseReference tokenDB = reference.child("tokenUser"); // referencia da tabela
                     tokenDB.child(buscaUltimoToken.getKey()).setValue(buscaUltimoToken);
                     finish();
                 } else {
@@ -153,4 +159,8 @@ public class CadastroActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 }

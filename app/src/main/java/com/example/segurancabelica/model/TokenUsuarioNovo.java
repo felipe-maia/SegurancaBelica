@@ -5,7 +5,7 @@ import com.google.firebase.database.Exclude;
 public class TokenUsuarioNovo {
 
     private String key;
-    private int token;
+    private String token;
     private boolean status;
     private String nivelPermissao;
     private String codigoCartao;
@@ -13,11 +13,11 @@ public class TokenUsuarioNovo {
     public TokenUsuarioNovo() {
     }
 
-    public int getToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(int token) {
+    public void setToken(String token) {
         this.token = token;
     }
 

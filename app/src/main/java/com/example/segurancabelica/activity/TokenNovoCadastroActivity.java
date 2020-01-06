@@ -27,6 +27,7 @@ import java.util.Random;
 public class TokenNovoCadastroActivity extends AppCompatActivity {
 
     private DatabaseReference reference = ConfigFirebase.getDataBase();
+    DatabaseReference tokenDB = reference.child("tokenUser");
     private EditText codigoCartao;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
@@ -50,8 +51,6 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
         codigoCartao = findViewById(R.id.editCodigoCartao);
 
         btGerarToken = findViewById(R.id.btGerarToken);
-        verificaToken();
-
         btGerarToken.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,30 +74,32 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        verificaUltimoToken();
+    }
 
     public void gerarToken() {
         int x = new Random().nextInt(9999);
-        tokenGerado.setText(String.valueOf(x));
-        token.setToken(x);
+        token.setToken(String.valueOf(x));
         token.setStatus(false);
+        tokenGerado.setText(token.getToken());
 
-        DatabaseReference tokenDB = reference.child("tokenUser");
         tokenDB.push().setValue(token);
     }
 
-    public void verificaToken() {
+    public void verificaUltimoToken() {
 
-        DatabaseReference tokenDB = reference.child("tokenUser"); // referencia da tabela
         Query queryUltimoToken = tokenDB.orderByKey().limitToLast(1);   //.orderByChild("status").equalTo(true);
-
-        queryUltimoToken.addValueEventListener(new ValueEventListener() {
+        queryUltimoToken.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()){
                     buscaUltimoToken = postSnapshot.getValue(TokenUsuarioNovo.class);
                     buscaUltimoToken.setKey(postSnapshot.getKey());
-                    ultimoToken.setText(String.valueOf(buscaUltimoToken.getToken()));
+                    ultimoToken.setText(buscaUltimoToken.getToken());
                     ultimoTokenNivel.setText(buscaUltimoToken.getNivelPermissao());
                 }
                 if (buscaUltimoToken.isStatus()) {
@@ -116,7 +117,5 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 }
