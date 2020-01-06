@@ -34,12 +34,10 @@ public class LoginActivity extends AppCompatActivity {
 
         edEmail = findViewById(R.id.editEmail);
         edSenha = findViewById(R.id.editSenha);
-        btEntrar = findViewById(R.id.btCadastrar);
-
+        btEntrar = findViewById(R.id.btEntrar);
         btEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 String textEmail = edEmail.getText().toString();
                 String textSenha = edSenha.getText().toString();
                 if (textEmail.isEmpty()) {

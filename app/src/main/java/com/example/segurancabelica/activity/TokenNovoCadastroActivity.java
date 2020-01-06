@@ -1,7 +1,6 @@
 package com.example.segurancabelica.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +26,8 @@ import java.util.Random;
 public class TokenNovoCadastroActivity extends AppCompatActivity {
 
     private DatabaseReference reference = ConfigFirebase.getDataBase();
-    DatabaseReference tokenDB = reference.child("tokenUser");
+    private DatabaseReference tokenDB = reference.child("tokenUser");
+    private ValueEventListener valueEventListenerTokenDB;
     private EditText codigoCartao;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
@@ -45,10 +45,11 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
 
         tokenGerado = findViewById(R.id.textTokenGerado);
         radioGroup = findViewById(R.id.radioGroup);
+        codigoCartao = findViewById(R.id.editCodigoCartao);
+
         ultimoToken = findViewById(R.id.textUltimoToken);
         ultimoTokenNivel = findViewById(R.id.textUltimoNivel);
         ultimoTokenStatus = findViewById(R.id.textUltimoStatus);
-        codigoCartao = findViewById(R.id.editCodigoCartao);
 
         btGerarToken = findViewById(R.id.btGerarToken);
         btGerarToken.setOnClickListener(new View.OnClickListener() {
@@ -91,8 +92,9 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
 
     public void verificaUltimoToken() {
 
-        Query queryUltimoToken = tokenDB.orderByKey().limitToLast(1);   //.orderByChild("status").equalTo(true);
-        queryUltimoToken.addListenerForSingleValueEvent(new ValueEventListener() {
+        Query queryUltimoToken = tokenDB.orderByKey().limitToLast(1);
+
+        valueEventListenerTokenDB = queryUltimoToken.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -105,7 +107,6 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
                 if (buscaUltimoToken.isStatus()) {
                     ultimoTokenStatus.setText("Token já utilizado");
                     btGerarToken.setEnabled(true);
-                    Log.i("teste token", "token: " + buscaUltimoToken.getKey());
                 }else {
                     btGerarToken.setEnabled(false);
                     ultimoTokenStatus.setText("Token não utilizado, não poderá gerar novo token");
@@ -117,5 +118,11 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        tokenDB.removeEventListener(valueEventListenerTokenDB);
     }
 }
