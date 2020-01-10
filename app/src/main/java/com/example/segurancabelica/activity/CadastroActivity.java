@@ -31,7 +31,6 @@ public class CadastroActivity extends AppCompatActivity {
 
     private DatabaseReference reference = ConfigFirebase.getDataBase();
     private DatabaseReference tokenDB = reference.child("tokenUser");
-    //private ValueEventListener valueEventListenerTokenDB;
     private EditText edNome, edEmail, edPosto, edSenha, edToken;
     private Button btCadastrar;
     private FirebaseAuth autenticacao;

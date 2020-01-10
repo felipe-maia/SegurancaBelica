@@ -3,6 +3,7 @@ package com.example.segurancabelica.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,8 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class InicialActivity extends AppCompatActivity {
 
-    private FirebaseAuth autenticacao;
-
+    private FirebaseAuth autenticacao = ConfigFirebase.getAutenticacao();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,19 +27,21 @@ public class InicialActivity extends AppCompatActivity {
         verificaLogin();
     }
 
-    public void cadastrar(View v){
+    public void cadastrar(View v) {
         startActivity(new Intent(this, CadastroActivity.class));
     }
 
-    public void logar(View v){
+    public void logar(View v) {
         startActivity(new Intent(this, LoginActivity.class));
     }
 
     public void verificaLogin() {
-        autenticacao = ConfigFirebase.getAutenticacao();
-        if (autenticacao.getCurrentUser()!=null){
+        if (autenticacao.getCurrentUser() != null) {
+            Toast.makeText(getApplicationContext(), "Bem vindo de volta " + autenticacao.getCurrentUser().getEmail() + "!", Toast.LENGTH_LONG).show();
             startActivity(new Intent(this, MainActivity.class));
             finish();
+        } else {
+            Toast.makeText(getApplicationContext(), "Usuario não está logado ", Toast.LENGTH_LONG).show();
         }
     }
 }

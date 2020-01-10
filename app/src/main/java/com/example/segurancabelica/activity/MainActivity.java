@@ -1,38 +1,35 @@
 package com.example.segurancabelica.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.segurancabelica.R;
 import com.example.segurancabelica.config.ConfigFirebase;
-import com.example.segurancabelica.model.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.Calendar;
 
-    private DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, DialogInterface.OnCancelListener {
+
+    private DatabaseReference reference = ConfigFirebase.getDataBase();
+    private DatabaseReference relatorios = reference.child("Acessos");
     private FirebaseAuth autenticacao;
-    private Button btToken;
+    private Button btToken, btRelatorioAcesso, btRelatorioAlarme;
+    private int year, month, day;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         btToken = findViewById(R.id.btActivityToken);
-
         btToken.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -40,23 +37,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //DatabaseReference usuarios = reference.child("usuarios"); // referencia da tabela
-
-        //pesquisas
-        //Query usuarioPesquisa = usuarios.orderByChild("nome").equalTo("Felipe");
-        //limitando primeiros 3 usuarios
-        //Query usuarioPesquisa = usuarios.orderByKey().limitToFirst(3);
-
-        //Query usuarioPesquisa = usuarios.orderByChild("nome").startAt("F").endAt("G" + "/utf8ff");
-        //Query usuarioPesquisa = usuarios.orderByChild ("nome").startAt("L");
-
-
-        /*
-        usuarioPesquisa.addValueEventListener(new ValueEventListener() { // listener da tabela referenciada
+        btRelatorioAcesso = findViewById(R.id.btRelatorioAcesso);
+        btRelatorioAlarme = findViewById(R.id.btRealatorioAlarme);
+        btRelatorioAcesso.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) { // capta qualquer alteração no DB e atualiza app
+            public void onClick(View view) {
+                selectDate();
+            }
+        });
 
-                Log.i("pesquisa", "usuario " + dataSnapshot.getValue().toString());
+
+
+
+        /* buscando dados do firebase
+        Date date = new Date();
+        GregorianCalendar gc = new GregorianCalendar();
+        gc.setGregorianChange(date);
+        gc.add(Calendar.HOUR,-3);
+        GregorianCalendar dataInicio = new GregorianCalendar();
+        dataInicio.setTime(gc.getTime());
+        GregorianCalendar dataFim = new GregorianCalendar();
+        dataFim.setTime(gc.getTime());
+
+        Query queryRelatorios = relatorios.orderByChild("dataHora").startAt(dataInicio.getTimeInMillis()).endAt(dataFim.getTimeInMillis());
+        Log.v("relatorio", "Antes relatorio");
+        queryRelatorios.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Log.v("relatorio", "Dados: "+ postSnapshot.getValue());
+                }
             }
 
             @Override
@@ -64,87 +75,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        //identificador unico
-        Usuario usuario = new Usuario();
-        usuario.setNome("Fernanda");
-        usuario.setPosto("1Ten");
-        usuario.setPermissao("Default");
-        usuarios.push().setValue(usuario);
-         */
-
-
-        /*
-        //deslogar usuario
-        user.signOut();
-
-        //login de usuario
-        user.signInWithEmailAndPassword("fe_switch@hotmail.com", "123456").addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    Log.i("Login", "Login realizado com sucesso!");
-
-                }else{
-                    Log.i("Login", "Erro ao efetuar login!");
-
-                }
-            }
-        });
-
-
-        if (user.getCurrentUser()!=null){ // verifica se esta autenticado
-            Toast.makeText(getApplicationContext(), "Bem vindo de volta " + user.getCurrentUser().getEmail() + "!", Toast.LENGTH_LONG).show();
-       }else{
-            Toast.makeText(getApplicationContext(), "Usuario não está logado " , Toast.LENGTH_LONG).show();
-
-        }
-        /*
-         */
-
-
-
-        /*   //*cria usuario autenticado email e senha
-        userAuthentication.createUserWithEmailAndPassword(
-                "fe_switch@hotmail.com", "123456").addOnCompleteListener(
-                        MainActivity.this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    Log.i("Cadastro", "Usuario cadastrado com sucesso!");
-
-                }else{
-                    Log.i("Cadastro", "Erro ao cadastrar usuario!");
-
-                }
-            }
-        });
-        /*
-
-
-
-
-        /*
-        DatabaseReference usuarios = reference.child("usuarios"); // referencia da tabela
-        usuarios.addValueEventListener(new ValueEventListener() { // listener da tabela referenciada
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) { // capta qualquer alteração no DB e atualiza app
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        Usuario user = new Usuario();
-        user.setNome("Felipe");
-        user.setPosto("SGT");
-        user.setPermissao("ADM");
-        usuarios.child("001").setValue(user); //insere objeto na tabela
         */
 
+        //deslogar usuario
+        //user.signOut();
     }
 
     private void abrirAtivityToken() {
@@ -152,5 +86,39 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    public void selectDate(){
+        initDate();
+        Calendar dateDefault = Calendar.getInstance();
+        dateDefault.set(year,month,day);
 
+        DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
+                this, dateDefault.get(Calendar.YEAR), dateDefault.get(Calendar.MONTH),dateDefault.get(Calendar.DAY_OF_MONTH));
+
+        datePickerDialog.setOnCancelListener(this);
+        datePickerDialog.show(getSupportFragmentManager(),"DatePickerDialog");
+    }
+
+    public void initDate(){
+        if(year == 0){
+            Calendar calendar = Calendar.getInstance();
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH);
+            day = calendar.get(Calendar.DAY_OF_MONTH);
+        }
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        year = month = day = 0;
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+
+    }
+
+    @Override
+    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+
+    }
 }
