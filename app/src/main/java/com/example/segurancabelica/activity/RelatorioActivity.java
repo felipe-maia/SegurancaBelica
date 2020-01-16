@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.segurancabelica.R;
+import com.example.segurancabelica.adapter.RelatorioAcessoAdapter;
 import com.example.segurancabelica.config.ConfigFirebase;
 import com.example.segurancabelica.model.Acessos;
 import com.google.firebase.database.DataSnapshot;
@@ -22,11 +26,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 public class RelatorioActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, DialogInterface.OnCancelListener {
 
@@ -34,110 +40,90 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
     private DatabaseReference refAcessos = reference.child("Acessos");
     private DatabaseReference refDisparoAlarme = reference.child("DisparoAlarme");
 
-    private Button dtInicial, dtFinal, btRelatorio;
+    private Button btDataInicial, btDataFinal, btRelatorio;
+    private TextView textDataInicio, textDataFim;
     private RecyclerView recyclerRelatorio;
+    private RelatorioAcessoAdapter relatorioAcessoAdapter;
     private List<Acessos> relatorioAcessos = new ArrayList<>();
+    private Calendar dataISelecionada, dataFSelecionada;
+    private SimpleDateFormat dfBuscaFireBase, dfMostrarData;
     private int year, month, day;
-    private GregorianCalendar dataInicio, dataFim;
+    private int dataInicio, dataFim;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_relatorio);
-        dataInicio = new GregorianCalendar();
-        dataFim = new GregorianCalendar();
-        recyclerRelatorio = findViewById(R.id.recyclerRelatorio);
-        //configurando recycler
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerRelatorio.setLayoutManager(layoutManager);
-        recyclerRelatorio.setHasFixedSize(true);
-        //recyclerRelatorio.setAdapter();
+        inicializarVariaveis();
 
-        dtInicial = findViewById(R.id.btDataInicial);
-        dtInicial.setOnClickListener(view -> {
-            inicializarData();
-            Calendar dateDefault = Calendar.getInstance();
-            dateDefault.set(year, month, day);
-            DatePickerDialog dataI = DatePickerDialog.newInstance(RelatorioActivity.this::onDateSet, dateDefault.get(Calendar.YEAR), dateDefault.get(Calendar.MONTH), dateDefault.get(Calendar.DAY_OF_MONTH));
+
+        btDataInicial.setOnClickListener(view -> {
+
+            DatePickerDialog dataI = DatePickerDialog.newInstance(RelatorioActivity.this::onDateSet, dataISelecionada.get(Calendar.YEAR), dataISelecionada.get(Calendar.MONTH), dataISelecionada.get(Calendar.DAY_OF_MONTH));
             dataI.setTitle("Data inicial do relatório");
             dataI.setOnDateSetListener((view12, year, monthOfYear, dayOfMonth) -> {
-                dataInicio.set(year, monthOfYear, dayOfMonth);
-                Log.i("msg", "DATA IN  " + dataInicio.getTime());
+                String dataSelecionadaString;
+
+                dataISelecionada.set(year, monthOfYear, dayOfMonth);
+                textDataInicio.setText(dfMostrarData.format(dataISelecionada.getTime()));
+
+                dataSelecionadaString = dfBuscaFireBase.format(dataISelecionada.getTime());
+                dataInicio = Integer.valueOf(dataSelecionadaString);
+
             });
             dataI.setOnCancelListener(this::onCancel);
             dataI.show(getSupportFragmentManager(), "DATAINICIAL");
         });
-        dtFinal = findViewById(R.id.btDataFinal);
-        dtFinal.setOnClickListener(view -> {
-            inicializarData();
-            Calendar dateDefault = Calendar.getInstance();
-            dateDefault.set(year, month, day);
-            DatePickerDialog dataF = DatePickerDialog.newInstance(RelatorioActivity.this::onDateSet, dateDefault.get(Calendar.YEAR), dateDefault.get(Calendar.MONTH), dateDefault.get(Calendar.DAY_OF_MONTH));
+
+
+        btDataFinal.setOnClickListener(view -> {
+
+            DatePickerDialog dataF = DatePickerDialog.newInstance(RelatorioActivity.this::onDateSet, dataFSelecionada.get(Calendar.YEAR), dataFSelecionada.get(Calendar.MONTH), dataFSelecionada.get(Calendar.DAY_OF_MONTH));
             dataF.setTitle("Data final do relatório");
             dataF.setOnDateSetListener((view1, year, monthOfYear, dayOfMonth) -> {
-                dataFim.set(year, monthOfYear, dayOfMonth);
-                Log.i("msg", "DATA FIM  " + dataFim.getTime());
+                String dataSelecionadaString;
+
+                dataFSelecionada.set(year, monthOfYear, dayOfMonth);
+                textDataFim.setText(dfMostrarData.format(dataFSelecionada.getTime()));
+
+
+                dataSelecionadaString = dfBuscaFireBase.format(dataFSelecionada.getTime());
+                dataFim = Integer.valueOf(dataSelecionadaString);
 
             });
             dataF.setOnCancelListener(this::onCancel);
             dataF.show(getSupportFragmentManager(), "DATAFINAL");
         });
 
-        btRelatorio = findViewById(R.id.btRelatorio);
         btRelatorio.setOnClickListener(view -> gerarRelatorioAcessos());
 
 
-        //selecionarData();
-
-
-        /*//buscando dados do firebase
-        Date date = new Date();
-        GregorianCalendar gc = new GregorianCalendar();
-        gc.setGregorianChange(date);
-        gc.add(Calendar.HOUR,-3);
-        GregorianCalendar dataInicio = new GregorianCalendar();
-        dataInicio.setTime(gc.getTime());
-        GregorianCalendar dataFim = new GregorianCalendar();
-        dataFim.setTime(gc.getTime());
-        */
-
-        //Query queryRelatorios = relatorios.orderByChild("dataHora").startAt(dataInicio.getTimeInMillis()).endAt(dataFim.getTimeInMillis());
-
-
-
-
 
     }
+    public void inicializarVariaveis(){
+        btDataInicial = findViewById(R.id.btDataInicial);
+        btDataFinal = findViewById(R.id.btDataFinal);
+        btRelatorio = findViewById(R.id.btRelatorio);
 
-    public void inicializarData() {
-        if (year == 0) {
-            Calendar calendar = Calendar.getInstance();
-            year = calendar.get(Calendar.YEAR);
-            month = calendar.get(Calendar.MONTH);
-            day = calendar.get(Calendar.DAY_OF_MONTH);
-        }
-    }
+        textDataInicio = findViewById(R.id.textDataInicio);
+        textDataFim = findViewById(R.id.textDataFim);
 
-    @Override
-    public void onCancel(DialogInterface dialogInterface) {
-        year = month = day = 0;
-    }
+        dfBuscaFireBase = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
+        dfMostrarData = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
-    @Override
-    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        //dataInicio.set(year, monthOfYear, dayOfMonth);
-    }
+        dataISelecionada = Calendar.getInstance();
+        dataFSelecionada = Calendar.getInstance();
 
-    @Override
-    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
-
+        textDataInicio.setText(dfMostrarData.format(dataISelecionada.getTime()));
+        textDataFim.setText(dfMostrarData.format(dataFSelecionada.getTime()));
     }
 
     public void gerarRelatorioAcessos() {
         relatorioAcessos.clear();
 
-        Query queryRelatorioAcessos = refAcessos.orderByChild("data").startAt(20200101).endAt(20201031);
+        Query queryRelatorioAcessos = refAcessos.orderByChild("data").startAt(dataInicio).endAt(dataFim);
+
         queryRelatorioAcessos.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -145,8 +131,11 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Acessos acesso = postSnapshot.getValue(Acessos.class);
                     relatorioAcessos.add(acesso);
-                    Log.v("Relatorio Acessos", "Dado: "+ acesso.getCodigoCartao() + acesso.getData() + acesso.getHora());
                 }
+                if (relatorioAcessos.size() == 0)
+                    Toast.makeText(RelatorioActivity.this, "Não existe dados entre as datas selecionadas", Toast.LENGTH_LONG).show();
+                else
+                    configurarAdapter();
             }
 
             @Override
@@ -156,7 +145,34 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
         });
     }
 
-    public void gerarRelatorioDisparoAlarme(){
+    public void configurarAdapter() {
+        //configurando adapter
+        relatorioAcessoAdapter = new RelatorioAcessoAdapter(relatorioAcessos);
+        //configurando recycler
+        recyclerRelatorio = findViewById(R.id.recyclerRelatorio);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerRelatorio.setLayoutManager(layoutManager);
+        recyclerRelatorio.setHasFixedSize(true);
+        recyclerRelatorio.setAdapter(relatorioAcessoAdapter);
+    }
+
+
+
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+    }
+
+    @Override
+    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+
+    }
+
+
+    public void gerarRelatorioDisparoAlarme() {
         Query queryRelatorioDisparo = refDisparoAlarme.orderByChild("data").startAt(20200101).endAt(20201031);
 
         queryRelatorioDisparo.addListenerForSingleValueEvent(new ValueEventListener() {

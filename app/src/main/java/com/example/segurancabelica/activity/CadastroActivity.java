@@ -47,7 +47,7 @@ public class CadastroActivity extends AppCompatActivity {
         edPosto = findViewById(R.id.editPosto);
         edSenha = findViewById(R.id.editSenha);
         edToken = findViewById(R.id.editToken);
-        btCadastrar = findViewById(R.id.btEntrar);
+        btCadastrar = findViewById(R.id.btCadastrar);
     }
 
     @Override

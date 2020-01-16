@@ -2,7 +2,6 @@ package com.example.segurancabelica.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,8 +19,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -37,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
 
         edEmail = findViewById(R.id.editEmail);
         edSenha = findViewById(R.id.editSenha);
-        btEntrar = findViewById(R.id.btEntrar);
+        btEntrar = findViewById(R.id.btCadastrar);
 
         btEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
