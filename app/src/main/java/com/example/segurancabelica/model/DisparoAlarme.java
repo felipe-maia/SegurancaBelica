@@ -4,7 +4,7 @@ public class DisparoAlarme {
 
     private boolean Alarme; //true = disparado, false = nao disparado;
     private int data;
-    private int hora;
+    private String hora;
 
     public DisparoAlarme() {
     }
@@ -25,11 +25,11 @@ public class DisparoAlarme {
         this.data = data;
     }
 
-    public int getHora() {
+    public String getHora() {
         return hora;
     }
 
-    public void setHora(int hora) {
+    public void setHora(String hora) {
         this.hora = hora;
     }
 }

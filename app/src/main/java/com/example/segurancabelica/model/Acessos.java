@@ -7,7 +7,7 @@ public class Acessos {
 
     private String codigoCartao; //codigo do cartao do usuario
     private int data;
-    private int hora;
+    private String hora;
     private boolean statusAlarme; //Ativo ou Inativo
     private Calendar dataHora = Calendar.getInstance();
 
@@ -27,11 +27,11 @@ public class Acessos {
         this.data = data;
     }
 
-    public int getHora() {
+    public String getHora() {
         return hora;
     }
 
-    public void setHora(int hora) {
+    public void setHora(String hora) {
         this.hora = hora;
     }
 

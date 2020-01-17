@@ -2,10 +2,7 @@ package com.example.segurancabelica.activity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.segurancabelica.R;
 import com.example.segurancabelica.adapter.RelatorioAcessoAdapter;
+import com.example.segurancabelica.adapter.RelatorioDisparoAdapter;
 import com.example.segurancabelica.config.ConfigFirebase;
 import com.example.segurancabelica.model.Acessos;
+import com.example.segurancabelica.model.DisparoAlarme;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,8 +28,6 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,14 +37,15 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
     private DatabaseReference refAcessos = reference.child("Acessos");
     private DatabaseReference refDisparoAlarme = reference.child("DisparoAlarme");
 
-    private Button btDataInicial, btDataFinal, btRelatorio;
+    private Button btDataInicial, btDataFinal, btRelatorioAcessos, btRelatorioDisparos;
     private TextView textDataInicio, textDataFim;
     private RecyclerView recyclerRelatorio;
     private RelatorioAcessoAdapter relatorioAcessoAdapter;
-    private List<Acessos> relatorioAcessos = new ArrayList<>();
+    private RelatorioDisparoAdapter relatorioDisparoAdapter;
+    private List<Acessos> relatorioAcessos;
+    private List<DisparoAlarme> relatorioDisparo;
     private Calendar dataISelecionada, dataFSelecionada;
     private SimpleDateFormat dfBuscaFireBase, dfMostrarData;
-    private int year, month, day;
     private int dataInicio, dataFim;
 
 
@@ -96,24 +94,27 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
             dataF.show(getSupportFragmentManager(), "DATAFINAL");
         });
 
-        btRelatorio.setOnClickListener(view -> gerarRelatorioAcessos());
+        btRelatorioAcessos.setOnClickListener(view -> gerarRelatorioAcessos());
 
+        btRelatorioDisparos.setOnClickListener(view -> gerarRelatorioDisparoAlarme());
 
 
     }
     public void inicializarVariaveis(){
         btDataInicial = findViewById(R.id.btDataInicial);
         btDataFinal = findViewById(R.id.btDataFinal);
-        btRelatorio = findViewById(R.id.btRelatorio);
+        btRelatorioAcessos = findViewById(R.id.btRelatorio);
+        btRelatorioDisparos = findViewById(R.id.btRelatorioDisparos);
 
-        textDataInicio = findViewById(R.id.textDataInicio);
+        textDataInicio = findViewById(R.id.textData);
         textDataFim = findViewById(R.id.textDataFim);
 
         dfBuscaFireBase = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
         dfMostrarData = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        relatorioAcessos = new ArrayList<>();
+        relatorioDisparo = new ArrayList<>();
 
-        dataISelecionada = Calendar.getInstance();
-        dataFSelecionada = Calendar.getInstance();
+        dataISelecionada = dataFSelecionada = Calendar.getInstance();
 
         textDataInicio.setText(dfMostrarData.format(dataISelecionada.getTime()));
         textDataFim.setText(dfMostrarData.format(dataFSelecionada.getTime()));
@@ -135,7 +136,7 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
                 if (relatorioAcessos.size() == 0)
                     Toast.makeText(RelatorioActivity.this, "Não existe dados entre as datas selecionadas", Toast.LENGTH_LONG).show();
                 else
-                    configurarAdapter();
+                    configurarAdapter(true);
             }
 
             @Override
@@ -145,17 +146,49 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
         });
     }
 
-    public void configurarAdapter() {
-        //configurando adapter
-        relatorioAcessoAdapter = new RelatorioAcessoAdapter(relatorioAcessos);
-        //configurando recycler
+    public void gerarRelatorioDisparoAlarme() {
+        relatorioDisparo.clear();
+
+        Query queryRelatorioDisparo = refDisparoAlarme.orderByChild("data").startAt(dataInicio).endAt(dataFim);
+
+        queryRelatorioDisparo.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    DisparoAlarme disparoAlarme =  postSnapshot.getValue(DisparoAlarme.class);
+                    relatorioDisparo.add(disparoAlarme);
+                }
+                if (relatorioDisparo.size() == 0)
+                    Toast.makeText(RelatorioActivity.this, "Não existe dados entre as datas selecionadas", Toast.LENGTH_LONG).show();
+                else
+                    configurarAdapter(false);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void configurarAdapter(boolean relatorio) {
         recyclerRelatorio = findViewById(R.id.recyclerRelatorio);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerRelatorio.setLayoutManager(layoutManager);
         recyclerRelatorio.setHasFixedSize(true);
-        recyclerRelatorio.setAdapter(relatorioAcessoAdapter);
+        //configurando adapter
+        if(relatorio) {
+            relatorioAcessoAdapter = new RelatorioAcessoAdapter(relatorioAcessos);
+            //configurando recycler
+            recyclerRelatorio.setAdapter(relatorioAcessoAdapter);
+        }else{
+            relatorioDisparoAdapter = new RelatorioDisparoAdapter(relatorioDisparo);
+            //configurando recycler
+            recyclerRelatorio.setAdapter(relatorioDisparoAdapter);
+        }
     }
-
 
 
     @Override
@@ -169,25 +202,5 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
     @Override
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
 
-    }
-
-
-    public void gerarRelatorioDisparoAlarme() {
-        Query queryRelatorioDisparo = refDisparoAlarme.orderByChild("data").startAt(20200101).endAt(20201031);
-
-        queryRelatorioDisparo.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Log.v("Relatorio Alarme", "Dado: " + postSnapshot.getValue());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 }

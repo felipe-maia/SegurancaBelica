@@ -18,11 +18,11 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class RelatorioAcessoAdapter extends RecyclerView.Adapter<RelatorioAcessoAdapter.MinhaViewHolder> {
+public class RelatorioAcessoAdapter extends RecyclerView.Adapter<RelatorioAcessoAdapter.AcessoViewHolder> {
 
     private List<Acessos> listaAcessos;
-    private SimpleDateFormat dfDataFirebase = new SimpleDateFormat("yyyyMMdd",Locale.ENGLISH);
-    private SimpleDateFormat dfMostrarData = new SimpleDateFormat("dd/MM/yyyy",Locale.ENGLISH);
+    private SimpleDateFormat dfDataFirebase = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
+    private SimpleDateFormat dfMostrarData = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
 
     public RelatorioAcessoAdapter(List<Acessos> lista) {
@@ -31,20 +31,20 @@ public class RelatorioAcessoAdapter extends RecyclerView.Adapter<RelatorioAcesso
 
     @NonNull
     @Override
-    public MinhaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AcessoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View itemLista = LayoutInflater.from(parent.getContext()).inflate(R.layout.relatorio_acessos, parent, false);
 
-        return new MinhaViewHolder(itemLista);
+        return new AcessoViewHolder(itemLista);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MinhaViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AcessoViewHolder holder, int position) {
 
-        Acessos acessos =  listaAcessos.get(position);
+        Acessos acessos = listaAcessos.get(position);
         if (acessos.isStatusAlarme()) {
             holder.statusAlarme.setText("Alarme Ativado");
-        }else
+        } else
             holder.statusAlarme.setText("Alarme Desativado");
 
         try {
@@ -55,8 +55,8 @@ public class RelatorioAcessoAdapter extends RecyclerView.Adapter<RelatorioAcesso
             e.printStackTrace();
         }
 
-        holder.codigoCartao.setText(acessos.getCodigoCartao());
-        holder.hora.setText(String.valueOf(acessos.getHora()));
+        holder.codigoCartao.setText("Codigo Cartão: "+acessos.getCodigoCartao());
+        holder.hora.setText(acessos.getHora());
 
     }
 
@@ -65,7 +65,7 @@ public class RelatorioAcessoAdapter extends RecyclerView.Adapter<RelatorioAcesso
         return this.listaAcessos.size();
     }
 
-    public class MinhaViewHolder extends RecyclerView.ViewHolder{
+    public class AcessoViewHolder extends RecyclerView.ViewHolder {
 
         private TextView statusAlarme;
         private TextView codigoCartao;
@@ -73,12 +73,12 @@ public class RelatorioAcessoAdapter extends RecyclerView.Adapter<RelatorioAcesso
         private TextView hora;
 
 
-        public MinhaViewHolder(@NonNull View itemView) {
+        public AcessoViewHolder(@NonNull View itemView) {
             super(itemView);
 
             statusAlarme = itemView.findViewById(R.id.textStatus);
             codigoCartao = itemView.findViewById(R.id.textCodigo);
-            data = itemView.findViewById(R.id.textDataInicio);
+            data = itemView.findViewById(R.id.textData);
             hora = itemView.findViewById(R.id.textHora);
 
         }

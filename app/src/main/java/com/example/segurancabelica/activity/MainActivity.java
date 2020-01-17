@@ -8,11 +8,14 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.segurancabelica.R;
+import com.example.segurancabelica.config.ConfigFirebase;
+import com.google.firebase.auth.FirebaseAuth;
 
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
-    private Button btToken, btRelatorioAcesso, btRelatorioAlarme;
+    private FirebaseAuth autenticacao = ConfigFirebase.getAutenticacao();
+    private Button btToken, btRelatorios, btLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,15 +24,20 @@ public class MainActivity extends AppCompatActivity  {
         btToken = findViewById(R.id.btActivityToken);
         btToken.setOnClickListener(view -> abrirAtivityToken());
 
-        btRelatorioAcesso = findViewById(R.id.btRelatorioAcesso);
-        btRelatorioAcesso.setOnClickListener(view -> abrirRelatorio());
+        btRelatorios = findViewById(R.id.btRelatorio);
+        btRelatorios.setOnClickListener(view -> abrirRelatorio());
 
-        btRelatorioAlarme = findViewById(R.id.btRealatorioAlarme);
-
-        //deslogar usuario
-        //user.signOut();
+        btLogout = findViewById(R.id.btLogout);
+        btLogout.setOnClickListener(v -> {
+            autenticacao.signOut();
+            sair();
+        });
     }
 
+    public void sair() {
+        startActivity(new Intent(this, InicialActivity.class));
+        finish();
+    }
 
     public void abrirRelatorio() {
         startActivity(new Intent(this, RelatorioActivity.class));
