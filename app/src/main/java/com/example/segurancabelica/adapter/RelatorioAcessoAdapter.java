@@ -13,6 +13,7 @@ import com.example.segurancabelica.model.Acessos;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +24,7 @@ public class RelatorioAcessoAdapter extends RecyclerView.Adapter<RelatorioAcesso
     private List<Acessos> listaAcessos;
     private SimpleDateFormat dfDataFirebase = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
     private SimpleDateFormat dfMostrarData = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    private SimpleDateFormat dfMostraHora = new SimpleDateFormat( "HH:mm:ss" , Locale.ENGLISH);
 
 
     public RelatorioAcessoAdapter(List<Acessos> lista) {
@@ -56,8 +58,13 @@ public class RelatorioAcessoAdapter extends RecyclerView.Adapter<RelatorioAcesso
         }
 
         holder.codigoCartao.setText("Codigo Cartão: "+acessos.getCodigoCartao());
-        holder.hora.setText(acessos.getHora());
 
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR,acessos.getHora());
+        c.set(Calendar.MINUTE, acessos.getMin());
+        c.set(Calendar.SECOND, acessos.getSeg());
+
+        holder.hora.setText(dfMostraHora.format(c.getTime()));
     }
 
     @Override

@@ -1,15 +1,14 @@
 package com.example.segurancabelica.model;
 
 
-import java.util.Calendar;
-
 public class Acessos {
 
+    private boolean statusAlarme; //Ativo ou Inativo
     private String codigoCartao; //codigo do cartao do usuario
     private int data;
-    private String hora;
-    private boolean statusAlarme; //Ativo ou Inativo
-    private Calendar dataHora = Calendar.getInstance();
+    private int hora;
+    private int min;
+    private int seg;
 
     public String getCodigoCartao() {
         return codigoCartao;
@@ -27,12 +26,28 @@ public class Acessos {
         this.data = data;
     }
 
-    public String getHora() {
+    public int getHora() {
         return hora;
     }
 
-    public void setHora(String hora) {
+    public void setHora(int hora) {
         this.hora = hora;
+    }
+
+    public int getMin() {
+        return min;
+    }
+
+    public void setMin(int min) {
+        this.min = min;
+    }
+
+    public int getSeg() {
+        return seg;
+    }
+
+    public void setSeg(int seg) {
+        this.seg = seg;
     }
 
     public boolean isStatusAlarme() {
@@ -41,13 +56,5 @@ public class Acessos {
 
     public void setStatusAlarme(boolean statusAlarme) {
         this.statusAlarme = statusAlarme;
-    }
-
-    public Calendar getDataHora() {
-        return dataHora;
-    }
-
-    public void setDataHora(Calendar dataHora) {
-        this.dataHora = dataHora;
     }
 }

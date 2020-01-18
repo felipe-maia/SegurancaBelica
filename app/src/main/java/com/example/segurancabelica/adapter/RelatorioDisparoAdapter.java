@@ -13,6 +13,7 @@ import com.example.segurancabelica.model.DisparoAlarme;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +23,8 @@ public class RelatorioDisparoAdapter extends RecyclerView.Adapter<RelatorioDispa
     private List<DisparoAlarme> listaDisparos;
     private SimpleDateFormat dfDataFirebase = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
     private SimpleDateFormat dfMostrarData = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    private SimpleDateFormat dfMostraHora = new SimpleDateFormat( "HH:mm:ss" , Locale.ENGLISH);
+
 
 
     public RelatorioDisparoAdapter(List<DisparoAlarme> lista) {
@@ -52,10 +55,12 @@ public class RelatorioDisparoAdapter extends RecyclerView.Adapter<RelatorioDispa
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR,disparoAlarme.getHora());
+        c.set(Calendar.MINUTE, disparoAlarme.getMin());
+        c.set(Calendar.SECOND, disparoAlarme.getSeg());
 
-        holder.hora.setText(disparoAlarme.getHora());
-
-
+        holder.hora.setText(dfMostraHora.format(c.getTime()));
     }
 
     @Override

@@ -94,13 +94,19 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
             dataF.show(getSupportFragmentManager(), "DATAFINAL");
         });
 
-        btRelatorioAcessos.setOnClickListener(view -> gerarRelatorioAcessos());
-
-        btRelatorioDisparos.setOnClickListener(view -> gerarRelatorioDisparoAlarme());
-
-
+        btRelatorioAcessos.setOnClickListener(view -> {
+            //relatorioAcessos.clear();
+            //relatorioDisparo.clear();
+            gerarRelatorioAcessos();
+        });
+        btRelatorioDisparos.setOnClickListener(view -> {
+            //relatorioAcessos.clear();
+            //relatorioDisparo.clear();
+            gerarRelatorioDisparoAlarme();
+        });
     }
-    public void inicializarVariaveis(){
+
+    public void inicializarVariaveis() {
         btDataInicial = findViewById(R.id.btDataInicial);
         btDataFinal = findViewById(R.id.btDataFinal);
         btRelatorioAcessos = findViewById(R.id.btRelatorio);
@@ -111,17 +117,21 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
 
         dfBuscaFireBase = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
         dfMostrarData = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
         relatorioAcessos = new ArrayList<>();
         relatorioDisparo = new ArrayList<>();
 
-        dataISelecionada = dataFSelecionada = Calendar.getInstance();
+        //dataISelecionada.set(Calendar.YEAR, );
+        //dataISelecionada.set(Calendar.MONTH, );
+        //dataISelecionada.set(Calendar.DAY, );
+        dataISelecionada = Calendar.getInstance();
+        dataFSelecionada = Calendar.getInstance();
 
         textDataInicio.setText(dfMostrarData.format(dataISelecionada.getTime()));
         textDataFim.setText(dfMostrarData.format(dataFSelecionada.getTime()));
     }
 
     public void gerarRelatorioAcessos() {
-        relatorioAcessos.clear();
 
         Query queryRelatorioAcessos = refAcessos.orderByChild("data").startAt(dataInicio).endAt(dataFim);
 
@@ -147,7 +157,6 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
     }
 
     public void gerarRelatorioDisparoAlarme() {
-        relatorioDisparo.clear();
 
         Query queryRelatorioDisparo = refDisparoAlarme.orderByChild("data").startAt(dataInicio).endAt(dataFim);
 
@@ -156,7 +165,7 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    DisparoAlarme disparoAlarme =  postSnapshot.getValue(DisparoAlarme.class);
+                    DisparoAlarme disparoAlarme = postSnapshot.getValue(DisparoAlarme.class);
                     relatorioDisparo.add(disparoAlarme);
                 }
                 if (relatorioDisparo.size() == 0)
@@ -179,11 +188,11 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
         recyclerRelatorio.setLayoutManager(layoutManager);
         recyclerRelatorio.setHasFixedSize(true);
         //configurando adapter
-        if(relatorio) {
+        if (relatorio) {
             relatorioAcessoAdapter = new RelatorioAcessoAdapter(relatorioAcessos);
             //configurando recycler
             recyclerRelatorio.setAdapter(relatorioAcessoAdapter);
-        }else{
+        } else {
             relatorioDisparoAdapter = new RelatorioDisparoAdapter(relatorioDisparo);
             //configurando recycler
             recyclerRelatorio.setAdapter(relatorioDisparoAdapter);

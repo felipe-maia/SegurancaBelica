@@ -4,7 +4,9 @@ public class DisparoAlarme {
 
     private boolean Alarme; //true = disparado, false = nao disparado;
     private int data;
-    private String hora;
+    private int hora;
+    private int min;
+    private int seg;
 
     public DisparoAlarme() {
     }
@@ -25,11 +27,27 @@ public class DisparoAlarme {
         this.data = data;
     }
 
-    public String getHora() {
+    public int getHora() {
         return hora;
     }
 
-    public void setHora(String hora) {
+    public void setHora(int hora) {
         this.hora = hora;
+    }
+
+    public int getMin() {
+        return min;
+    }
+
+    public void setMin(int min) {
+        this.min = min;
+    }
+
+    public int getSeg() {
+        return seg;
+    }
+
+    public void setSeg(int seg) {
+        this.seg = seg;
     }
 }
