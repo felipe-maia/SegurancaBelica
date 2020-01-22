@@ -13,7 +13,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class InicialActivity extends AppCompatActivity {
 
-    private FirebaseAuth autenticacao = ConfigFirebase.getAutenticacao();
     private Button btLogin, btCadastrar;
 
     @Override
@@ -26,12 +25,6 @@ public class InicialActivity extends AppCompatActivity {
         btCadastrar.setOnClickListener(view -> cadastrar());
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        verificaLogin();
-    }
-
     public void cadastrar() {
         startActivity(new Intent(this, CadastroActivity.class));
     }
@@ -40,13 +33,5 @@ public class InicialActivity extends AppCompatActivity {
         startActivity(new Intent(this, LoginActivity.class));
     }
 
-    public void verificaLogin() {
-        if (autenticacao.getCurrentUser() != null) {
-            Toast.makeText(getApplicationContext(), "Bem vindo de volta " + autenticacao.getCurrentUser().getEmail() + "!", Toast.LENGTH_LONG).show();
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        } else {
-            Toast.makeText(getApplicationContext(), "Usuario não está logado ", Toast.LENGTH_LONG).show();
-        }
-    }
+
 }

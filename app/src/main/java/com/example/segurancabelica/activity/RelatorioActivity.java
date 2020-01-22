@@ -61,14 +61,10 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
             DatePickerDialog dataI = DatePickerDialog.newInstance(RelatorioActivity.this::onDateSet, dataISelecionada.get(Calendar.YEAR), dataISelecionada.get(Calendar.MONTH), dataISelecionada.get(Calendar.DAY_OF_MONTH));
             dataI.setTitle("Data inicial do relatório");
             dataI.setOnDateSetListener((view12, year, monthOfYear, dayOfMonth) -> {
-                String dataSelecionadaString;
 
                 dataISelecionada.set(year, monthOfYear, dayOfMonth);
                 textDataInicio.setText(dfMostrarData.format(dataISelecionada.getTime()));
-
-                dataSelecionadaString = dfBuscaFireBase.format(dataISelecionada.getTime());
-                dataInicio = Integer.valueOf(dataSelecionadaString);
-
+                dataInicio = Integer.valueOf(dfBuscaFireBase.format(dataISelecionada.getTime()));
             });
             dataI.setOnCancelListener(this::onCancel);
             dataI.show(getSupportFragmentManager(), "DATAINICIAL");
@@ -80,28 +76,19 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
             DatePickerDialog dataF = DatePickerDialog.newInstance(RelatorioActivity.this::onDateSet, dataFSelecionada.get(Calendar.YEAR), dataFSelecionada.get(Calendar.MONTH), dataFSelecionada.get(Calendar.DAY_OF_MONTH));
             dataF.setTitle("Data final do relatório");
             dataF.setOnDateSetListener((view1, year, monthOfYear, dayOfMonth) -> {
-                String dataSelecionadaString;
 
                 dataFSelecionada.set(year, monthOfYear, dayOfMonth);
                 textDataFim.setText(dfMostrarData.format(dataFSelecionada.getTime()));
-
-
-                dataSelecionadaString = dfBuscaFireBase.format(dataFSelecionada.getTime());
-                dataFim = Integer.valueOf(dataSelecionadaString);
-
+                dataFim = Integer.valueOf( dfBuscaFireBase.format(dataFSelecionada.getTime()));
             });
             dataF.setOnCancelListener(this::onCancel);
             dataF.show(getSupportFragmentManager(), "DATAFINAL");
         });
 
         btRelatorioAcessos.setOnClickListener(view -> {
-            //relatorioAcessos.clear();
-            //relatorioDisparo.clear();
             gerarRelatorioAcessos();
         });
         btRelatorioDisparos.setOnClickListener(view -> {
-            //relatorioAcessos.clear();
-            //relatorioDisparo.clear();
             gerarRelatorioDisparoAlarme();
         });
     }
@@ -121,20 +108,20 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
         relatorioAcessos = new ArrayList<>();
         relatorioDisparo = new ArrayList<>();
 
-        //dataISelecionada.set(Calendar.YEAR, );
-        //dataISelecionada.set(Calendar.MONTH, );
-        //dataISelecionada.set(Calendar.DAY, );
         dataISelecionada = Calendar.getInstance();
         dataFSelecionada = Calendar.getInstance();
+
+        dataInicio = Integer.valueOf(dfBuscaFireBase.format(dataISelecionada.getTime()));
+        dataFim = Integer.valueOf(dfBuscaFireBase.format(dataFSelecionada.getTime()));
 
         textDataInicio.setText(dfMostrarData.format(dataISelecionada.getTime()));
         textDataFim.setText(dfMostrarData.format(dataFSelecionada.getTime()));
     }
 
     public void gerarRelatorioAcessos() {
+        relatorioAcessos.clear();
 
         Query queryRelatorioAcessos = refAcessos.orderByChild("data").startAt(dataInicio).endAt(dataFim);
-
         queryRelatorioAcessos.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -144,22 +131,21 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
                     relatorioAcessos.add(acesso);
                 }
                 if (relatorioAcessos.size() == 0)
-                    Toast.makeText(RelatorioActivity.this, "Não existe dados entre as datas selecionadas", Toast.LENGTH_LONG).show();
+                    Toast.makeText(RelatorioActivity.this, "Não existe dados de ACESSO entre as datas selecionadas", Toast.LENGTH_SHORT).show();
                 else
                     configurarAdapter(true);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
 
     public void gerarRelatorioDisparoAlarme() {
+        relatorioDisparo.clear();
 
         Query queryRelatorioDisparo = refDisparoAlarme.orderByChild("data").startAt(dataInicio).endAt(dataFim);
-
         queryRelatorioDisparo.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -169,15 +155,13 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
                     relatorioDisparo.add(disparoAlarme);
                 }
                 if (relatorioDisparo.size() == 0)
-                    Toast.makeText(RelatorioActivity.this, "Não existe dados entre as datas selecionadas", Toast.LENGTH_LONG).show();
+                    Toast.makeText(RelatorioActivity.this, "Não existe dados de DISPARO entre as datas selecionadas", Toast.LENGTH_SHORT).show();
                 else
                     configurarAdapter(false);
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -187,14 +171,12 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerRelatorio.setLayoutManager(layoutManager);
         recyclerRelatorio.setHasFixedSize(true);
-        //configurando adapter
+
         if (relatorio) {
             relatorioAcessoAdapter = new RelatorioAcessoAdapter(relatorioAcessos);
-            //configurando recycler
             recyclerRelatorio.setAdapter(relatorioAcessoAdapter);
         } else {
             relatorioDisparoAdapter = new RelatorioDisparoAdapter(relatorioDisparo);
-            //configurando recycler
             recyclerRelatorio.setAdapter(relatorioDisparoAdapter);
         }
     }

@@ -24,7 +24,7 @@ public class RelatorioAcessoAdapter extends RecyclerView.Adapter<RelatorioAcesso
     private List<Acessos> listaAcessos;
     private SimpleDateFormat dfDataFirebase = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
     private SimpleDateFormat dfMostrarData = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-    private SimpleDateFormat dfMostraHora = new SimpleDateFormat( "HH:mm:ss" , Locale.ENGLISH);
+    private SimpleDateFormat dfMostraHora = new SimpleDateFormat( "HH:mm:ss");
 
 
     public RelatorioAcessoAdapter(List<Acessos> lista) {

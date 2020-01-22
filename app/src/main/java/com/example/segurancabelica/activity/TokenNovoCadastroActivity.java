@@ -52,25 +52,22 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
         ultimoTokenStatus = findViewById(R.id.textUltimoStatus);
 
         btGerarToken = findViewById(R.id.btGerarToken);
-        btGerarToken.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        btGerarToken.setOnClickListener(view -> {
 
-                final String textCodigoCartao = codigoCartao.getText().toString();
+            final String textCodigoCartao = codigoCartao.getText().toString();
 
-                if (textCodigoCartao.isEmpty()) {
-                    Toast.makeText(TokenNovoCadastroActivity.this, "Preencha o campo código do cartão!", Toast.LENGTH_SHORT).show();
-                }else {
-                    token.setCodigoCartao(textCodigoCartao);
-                    int radioId = radioGroup.getCheckedRadioButtonId();
-                    radioButton = findViewById(radioId);
-                    if (radioButton.getText().toString().equals("Nível Padrão")) {
-                        token.setNivelPermissao("Nível Padrão");
-                    } else {
-                        token.setNivelPermissao("Nível ADM");
-                    }
-                    gerarToken();
+            if (textCodigoCartao.isEmpty()) {
+                Toast.makeText(TokenNovoCadastroActivity.this, "Preencha o campo código do cartão!", Toast.LENGTH_SHORT).show();
+            }else {
+                token.setCodigoCartao(textCodigoCartao);
+                int radioId = radioGroup.getCheckedRadioButtonId();
+                radioButton = findViewById(radioId);
+                if (radioButton.getText().toString().equals("Nível Padrão")) {
+                    token.setNivelPermissao("Nível Padrão");
+                } else {
+                    token.setNivelPermissao("Nível ADM");
                 }
+                gerarToken();
             }
         });
     }

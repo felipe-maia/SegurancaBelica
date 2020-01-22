@@ -23,8 +23,7 @@ public class RelatorioDisparoAdapter extends RecyclerView.Adapter<RelatorioDispa
     private List<DisparoAlarme> listaDisparos;
     private SimpleDateFormat dfDataFirebase = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
     private SimpleDateFormat dfMostrarData = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
-    private SimpleDateFormat dfMostraHora = new SimpleDateFormat( "HH:mm:ss" , Locale.ENGLISH);
-
+    private SimpleDateFormat dfMostraHora = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
 
 
     public RelatorioDisparoAdapter(List<DisparoAlarme> lista) {
@@ -47,7 +46,7 @@ public class RelatorioDisparoAdapter extends RecyclerView.Adapter<RelatorioDispa
         if (disparoAlarme.isAlarme()) {
             holder.statusDisparo.setText("Alarme Disparado");
         } else
-            holder.statusDisparo.setText("Alarme Não Disparado");
+            holder.statusDisparo.setText("Alarme Reativado");
 
         try {
             Date dataFormatada = dfDataFirebase.parse(String.valueOf(disparoAlarme.getData()));
@@ -56,7 +55,7 @@ public class RelatorioDisparoAdapter extends RecyclerView.Adapter<RelatorioDispa
             e.printStackTrace();
         }
         Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR,disparoAlarme.getHora());
+        c.set(Calendar.HOUR, disparoAlarme.getHora());
         c.set(Calendar.MINUTE, disparoAlarme.getMin());
         c.set(Calendar.SECOND, disparoAlarme.getSeg());
 

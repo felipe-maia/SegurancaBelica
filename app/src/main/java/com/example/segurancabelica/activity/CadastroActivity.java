@@ -53,37 +53,34 @@ public class CadastroActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        btCadastrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String textNome = edNome.getText().toString();
-                final String textPosto = edPosto.getText().toString();
-                final String textEmail = edEmail.getText().toString();
-                final String textSenha = edSenha.getText().toString();
-                final String textToken = edToken.getText().toString();
+        btCadastrar.setOnClickListener(view -> {
+            final String textNome = edNome.getText().toString();
+            final String textPosto = edPosto.getText().toString();
+            final String textEmail = edEmail.getText().toString();
+            final String textSenha = edSenha.getText().toString();
+            final String textToken = edToken.getText().toString();
 
-                if (textNome.isEmpty()) {
-                    Toast.makeText(CadastroActivity.this, "Preencha o campo nome!", Toast.LENGTH_SHORT).show();
+            if (textNome.isEmpty()) {
+                Toast.makeText(CadastroActivity.this, "Preencha o campo nome!", Toast.LENGTH_SHORT).show();
+            } else {
+                if (textEmail.isEmpty()) {
+                    Toast.makeText(CadastroActivity.this, "Preencha o campo e-mail!", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (textEmail.isEmpty()) {
-                        Toast.makeText(CadastroActivity.this, "Preencha o campo e-mail!", Toast.LENGTH_SHORT).show();
+                    if (textSenha.isEmpty()) {
+                        Toast.makeText(CadastroActivity.this, "Preencha o campo senha!", Toast.LENGTH_SHORT).show();
                     } else {
-                        if (textSenha.isEmpty()) {
-                            Toast.makeText(CadastroActivity.this, "Preencha o campo senha!", Toast.LENGTH_SHORT).show();
+                        if (textPosto.isEmpty()) {
+                            Toast.makeText(CadastroActivity.this, "Preencha o campo posto!", Toast.LENGTH_SHORT).show();
                         } else {
-                            if (textPosto.isEmpty()) {
-                                Toast.makeText(CadastroActivity.this, "Preencha o campo posto!", Toast.LENGTH_SHORT).show();
+                            if (textToken.isEmpty()) {
+                                Toast.makeText(CadastroActivity.this, "Preencha o campo token!", Toast.LENGTH_SHORT).show();
                             } else {
-                                if (textToken.isEmpty()) {
-                                    Toast.makeText(CadastroActivity.this, "Preencha o campo token!", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    usuario = new Usuario();
-                                    usuario.setNome(textNome);
-                                    usuario.setEmail(textEmail);
-                                    usuario.setSenha(textSenha);
-                                    usuario.setPosto(textPosto);
-                                    buscaUltimoToken(textToken);
-                                }
+                                usuario = new Usuario();
+                                usuario.setNome(textNome);
+                                usuario.setEmail(textEmail);
+                                usuario.setSenha(textSenha);
+                                usuario.setPosto(textPosto);
+                                buscaUltimoToken(textToken);
                             }
                         }
                     }
