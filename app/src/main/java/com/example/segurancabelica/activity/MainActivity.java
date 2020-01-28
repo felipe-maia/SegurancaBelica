@@ -2,6 +2,7 @@ package com.example.segurancabelica.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ValueEventListener valueEventListenerAcesso, valueEventListenerDisparo;
 
-    private Button btToken, btRelatorios, btLogout;
+    private Button btUsuarios, btRelatorios, btLogout;
     private TextView textStatusAlarme, textNome, textPosto;
     private boolean statusAcesso, statusDisparo;
 
@@ -41,15 +44,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         verificaLogin();
+        recuperaToken();
 
         setContentView(R.layout.activity_main);
         textStatusAlarme = findViewById(R.id.textStatusAlarme);
         textNome = findViewById(R.id.textNome);
         textPosto = findViewById(R.id.textPosto);
 
-        btToken = findViewById(R.id.btActivityToken);
-        btToken.setEnabled(false);
-        btToken.setOnClickListener(view -> abrirAtivityToken());
+        btUsuarios = findViewById(R.id.btActivityUsuarios);
+        btUsuarios.setEnabled(false);
+        btUsuarios.setOnClickListener(view -> abrirUsuarios());
 
         btRelatorios = findViewById(R.id.btRelatorio);
         btRelatorios.setOnClickListener(view -> abrirRelatorio());
@@ -66,6 +70,24 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         verificaUsuario();
         atualizaStatusAlarme();
+
+    }
+
+    public void recuperaToken() { //token para envio de notificações
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("token", "getInstanceId failed", task.getException());
+                        return;
+                    }
+                    // Get new Instance ID token
+                    String token = task.getResult().getToken();
+
+                    // Log and toast
+                    Log.d("token", token);
+                    //Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
+                });
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
     }
 
     public void verificaLogin() {
@@ -79,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void verificaUsuario() {
+
         String id = Base64Custom.codificarBase64(autenticacao.getCurrentUser().getEmail());
 
         Query queryUser = refUser.orderByKey().equalTo(id);
@@ -90,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                     textNome.setText(user.getNome());
                     textPosto.setText(user.getPosto());
                     if (user.getPermissao().equals("Nível ADM")) {
-                        btToken.setEnabled(true);
+                        btUsuarios.setEnabled(true);
                     }
                 }
             }
@@ -161,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, RelatorioActivity.class));
     }
 
-    public void abrirAtivityToken() {
-        startActivity(new Intent(this, TokenNovoCadastroActivity.class));
+    public void abrirUsuarios() {
+        startActivity(new Intent(this, UsuariosActivity.class));
     }
 
     @Override

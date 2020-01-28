@@ -83,10 +83,10 @@ public class RelatorioAcessoAdapter extends RecyclerView.Adapter<RelatorioAcesso
         public AcessoViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            statusAlarme = itemView.findViewById(R.id.textStatus);
+            statusAlarme = itemView.findViewById(R.id.textNome);
             codigoCartao = itemView.findViewById(R.id.textCodigo);
-            data = itemView.findViewById(R.id.textData);
-            hora = itemView.findViewById(R.id.textHora);
+            data = itemView.findViewById(R.id.textPosto);
+            hora = itemView.findViewById(R.id.textEmail);
 
         }
     }

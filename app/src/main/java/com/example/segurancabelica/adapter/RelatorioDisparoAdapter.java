@@ -75,9 +75,9 @@ public class RelatorioDisparoAdapter extends RecyclerView.Adapter<RelatorioDispa
 
         public DisparoViewHolder(@NonNull View itemView) {
             super(itemView);
-            statusDisparo = itemView.findViewById(R.id.textStatus);
-            data = itemView.findViewById(R.id.textData);
-            hora = itemView.findViewById(R.id.textHora);
+            statusDisparo = itemView.findViewById(R.id.textNome);
+            data = itemView.findViewById(R.id.textPosto);
+            hora = itemView.findViewById(R.id.textEmail);
         }
     }
 }

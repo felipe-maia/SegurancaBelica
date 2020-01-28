@@ -87,7 +87,7 @@
         app:layout_constraintVertical_bias="0.992" />
 
     <TextView
-        android:id="@+id/textData"
+        android:id="@+id/textPosto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Data Inicio"

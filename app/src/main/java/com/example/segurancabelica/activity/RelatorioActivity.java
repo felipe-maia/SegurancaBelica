@@ -99,7 +99,7 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
         btRelatorioAcessos = findViewById(R.id.btRelatorio);
         btRelatorioDisparos = findViewById(R.id.btRelatorioDisparos);
 
-        textDataInicio = findViewById(R.id.textData);
+        textDataInicio = findViewById(R.id.textPosto);
         textDataFim = findViewById(R.id.textDataFim);
 
         dfBuscaFireBase = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
