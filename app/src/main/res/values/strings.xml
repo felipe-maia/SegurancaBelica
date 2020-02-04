@@ -9,4 +9,20 @@
     <string name="nome">Nome</string>
     <string name="token">Token</string>
     <string name="default_notification_channel_id">fcm_default_channel</string>
+    <string-array name="postos">
+        <item>Posto/Graduação</item>
+        <item>Soldado</item>
+        <item>Cabo</item>
+        <item>3°SGT</item>
+        <item>2°SGT</item>
+        <item>1°SGT</item>
+        <item>Subtenente</item>
+        <item>AspOf</item>
+        <item>2°Tenente</item>
+        <item>1°Tenente</item>
+        <item>Capitão</item>
+        <item>Major</item>
+        <item>Tenente-Coronel</item>
+        <item>Coronel</item>
+    </string-array>
 </resources>

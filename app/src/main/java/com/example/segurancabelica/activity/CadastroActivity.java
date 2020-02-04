@@ -3,8 +3,10 @@ package com.example.segurancabelica.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,7 +34,8 @@ public class CadastroActivity extends AppCompatActivity {
 
     private DatabaseReference reference = ConfigFirebase.getDataBase();
     private DatabaseReference tokenDB = reference.child("tokenUser");
-    private EditText edNome, edEmail, edPosto, edSenha, edToken;
+    private Spinner spinnerPosto;
+    private EditText edNome, edEmail, edSenha, edToken;
     private Button btCadastrar;
     private FirebaseAuth autenticacao;
     private TokenUsuarioNovo buscaUltimoToken;
@@ -45,10 +48,13 @@ public class CadastroActivity extends AppCompatActivity {
 
         edNome = findViewById(R.id.editNome);
         edEmail = findViewById(R.id.editEmail);
-        edPosto = findViewById(R.id.editPosto);
+        spinnerPosto = findViewById(R.id.spinner);
         edSenha = findViewById(R.id.editSenha);
         edToken = findViewById(R.id.editToken);
         btCadastrar = findViewById(R.id.btEntrar);
+
+        ArrayAdapter arrayAdapter = ArrayAdapter.createFromResource(this, R.array.postos, android.R.layout.simple_spinner_item);
+        spinnerPosto.setAdapter(arrayAdapter);
     }
 
     @Override
@@ -56,7 +62,7 @@ public class CadastroActivity extends AppCompatActivity {
         super.onResume();
         btCadastrar.setOnClickListener(view -> {
             final String textNome = edNome.getText().toString();
-            final String textPosto = edPosto.getText().toString();
+            final String textPosto = spinnerPosto.getSelectedItem().toString();
             final String textEmail = edEmail.getText().toString();
             final String textSenha = edSenha.getText().toString();
             final String textToken = edToken.getText().toString();
@@ -70,8 +76,8 @@ public class CadastroActivity extends AppCompatActivity {
                     if (textSenha.isEmpty()) {
                         Toast.makeText(CadastroActivity.this, "Preencha o campo senha!", Toast.LENGTH_SHORT).show();
                     } else {
-                        if (textPosto.isEmpty()) {
-                            Toast.makeText(CadastroActivity.this, "Preencha o campo posto!", Toast.LENGTH_SHORT).show();
+                        if (textPosto.equals("Posto/Graduação")) {
+                            Toast.makeText(CadastroActivity.this, "Selecione o posto/graduação!", Toast.LENGTH_SHORT).show();
                         } else {
                             if (textToken.isEmpty()) {
                                 Toast.makeText(CadastroActivity.this, "Preencha o campo token!", Toast.LENGTH_SHORT).show();

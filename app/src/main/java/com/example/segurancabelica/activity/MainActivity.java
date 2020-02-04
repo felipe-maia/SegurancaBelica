@@ -110,9 +110,7 @@ public class MainActivity extends AppCompatActivity {
                             if (user.getPermissao().equals("Nível ADM")) {
                                 btUsuarios.setEnabled(true);
                             }
-
                         }
-
                         Toast.makeText(getApplicationContext(), "Bem vindo " + user.getNome() + "!", Toast.LENGTH_LONG).show();
 
                     } else {
@@ -126,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                 }
             });
+        } else {
+            redirecionaActivityInicial();
         }
 
     }
@@ -134,12 +134,9 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         user.delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("EXCLUIUSER", "User account deleted.");
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("EXCLUIUSER", "User account deleted.");
                     }
                 });
     }
