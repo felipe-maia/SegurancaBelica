@@ -6,7 +6,7 @@ import com.google.firebase.database.Exclude;
 
 public class Usuario {
 
-    private String idUsuario;
+    private String id;
     private String nome;
     private String posto;
     private String permissao;
@@ -19,7 +19,7 @@ public class Usuario {
 
     public void salvar(){
         DatabaseReference reference = ConfigFirebase.getDataBase();
-        reference.child("usuarios").child(this.idUsuario).setValue(this);
+        reference.child("usuarios").child(this.id).setValue(this);
     }
 
     public String getCodigoCartao() {
@@ -72,12 +72,12 @@ public class Usuario {
     }
 
     @Exclude
-    public String getIdUsuario() {
-        return idUsuario;
+    public String getId() {
+        return id;
     }
 
-    public void setIdUsuario(String idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setId(String id) {
+        this.id = id;
     }
 
 }

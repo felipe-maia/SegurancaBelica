@@ -16,7 +16,10 @@ import com.example.segurancabelica.helper.Base64Custom;
 import com.example.segurancabelica.model.Acessos;
 import com.example.segurancabelica.model.DisparoAlarme;
 import com.example.segurancabelica.model.Usuario;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference refUser = reference.child("usuarios");
 
     private ValueEventListener valueEventListenerAcesso, valueEventListenerDisparo;
+    private Usuario user = new Usuario();
 
     private Button btUsuarios, btRelatorios, btLogout;
     private TextView textStatusAlarme, textNome, textPosto;
@@ -43,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        verificaLogin();
+        verificaUsuario();
         recuperaToken();
 
         setContentView(R.layout.activity_main);
@@ -68,9 +72,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        verificaUsuario();
         atualizaStatusAlarme();
-
     }
 
     public void recuperaToken() { //token para envio de notificações
@@ -90,38 +92,61 @@ public class MainActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
     }
 
-    public void verificaLogin() {
-        if (autenticacao.getCurrentUser() != null) {
-            Toast.makeText(getApplicationContext(), "Bem vindo " + autenticacao.getCurrentUser().getEmail() + "!", Toast.LENGTH_LONG).show();
-
-        } else {
-            startActivity(new Intent(this, InicialActivity.class));
-            finish();
-        }
-    }
-
     public void verificaUsuario() {
 
-        String id = Base64Custom.codificarBase64(autenticacao.getCurrentUser().getEmail());
+        if (autenticacao.getCurrentUser() != null) {
+            String id = Base64Custom.codificarBase64(autenticacao.getCurrentUser().getEmail());
 
-        Query queryUser = refUser.orderByKey().equalTo(id);
-        queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Usuario user = postSnapshot.getValue(Usuario.class);
-                    textNome.setText(user.getNome());
-                    textPosto.setText(user.getPosto());
-                    if (user.getPermissao().equals("Nível ADM")) {
-                        btUsuarios.setEnabled(true);
+            Query queryUser = refUser.orderByKey().equalTo(id);
+            queryUser.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            user = postSnapshot.getValue(Usuario.class);
+                            textNome.setText(user.getNome());
+                            textPosto.setText(user.getPosto());
+
+                            if (user.getPermissao().equals("Nível ADM")) {
+                                btUsuarios.setEnabled(true);
+                            }
+
+                        }
+
+                        Toast.makeText(getApplicationContext(), "Bem vindo " + user.getNome() + "!", Toast.LENGTH_LONG).show();
+
+                    } else {
+                        excluirUser();
+                        Toast.makeText(getApplicationContext(), "Usuário descadastrado", Toast.LENGTH_LONG).show();
+                        redirecionaActivityInicial();
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        }
+
+    }
+
+    public void excluirUser() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        user.delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("EXCLUIUSER", "User account deleted.");
+                        }
+                    }
+                });
+    }
+
+    public void redirecionaActivityInicial() {
+        startActivity(new Intent(this, InicialActivity.class));
+        finish();
     }
 
     public void atualizaStatusAlarme() {
@@ -163,15 +188,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void defineStatus() {
+        String statusAlarme;
         if (statusAcesso) {
             if (statusDisparo) {
-                textStatusAlarme.setText("Status Alarme: Atenção Alarme Disparado!");
+                statusAlarme = "Status Alarme: Atenção Alarme Disparado!";
             } else {
-                textStatusAlarme.setText("Status Alarme: Ativado");
+                statusAlarme = "Status Alarme: Ativado";
             }
         } else {
-            textStatusAlarme.setText("Status Alarme: Desativado");
+            statusAlarme = "Status Alarme: Desativado";
         }
+        textStatusAlarme.setText(statusAlarme);
     }
 
     public void sair() {

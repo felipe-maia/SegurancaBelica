@@ -1,5 +1,6 @@
 package com.example.segurancabelica.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -130,11 +131,11 @@ public class CadastroActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     String idUsuario = Base64Custom.codificarBase64(usuario.getEmail());
-                    usuario.setIdUsuario(idUsuario);
+                    usuario.setId(idUsuario);
                     usuario.salvar();
                     buscaUltimoToken.setStatus(true);
                     tokenDB.child(buscaUltimoToken.getKey()).setValue(buscaUltimoToken);
-                    finish();
+                    abrirMainActivity();
                 } else {
                     String excecao = "";
                     try {
@@ -153,6 +154,11 @@ public class CadastroActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void abrirMainActivity() {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     @Override

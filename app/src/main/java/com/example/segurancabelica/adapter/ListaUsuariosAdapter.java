@@ -18,8 +18,8 @@ public class ListaUsuariosAdapter extends RecyclerView.Adapter<ListaUsuariosAdap
 
     private List<Usuario> listaUsuarios;
 
-    public ListaUsuariosAdapter(List<Usuario> lista) {
-        this.listaUsuarios = lista;
+    public ListaUsuariosAdapter(List<Usuario> listaUsuarios) {
+        this.listaUsuarios = listaUsuarios;
     }
 
     @NonNull
@@ -38,7 +38,8 @@ public class ListaUsuariosAdapter extends RecyclerView.Adapter<ListaUsuariosAdap
 
         holder.nome.setText(usuario.getNome());
         holder.posto.setText(usuario.getPosto());
-        holder.codigo.setText("Cartão: "+usuario.getCodigoCartao());
+        String cartão = "Cartão: " + usuario.getCodigoCartao();
+        holder.codigo.setText(cartão);
         holder.nivel.setText(usuario.getPermissao());
         holder.email.setText(usuario.getEmail());
     }
