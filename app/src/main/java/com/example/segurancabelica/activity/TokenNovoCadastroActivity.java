@@ -1,7 +1,6 @@
 package com.example.segurancabelica.activity;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -58,15 +57,15 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
 
             if (textCodigoCartao.isEmpty()) {
                 Toast.makeText(TokenNovoCadastroActivity.this, "Preencha o campo código do cartão!", Toast.LENGTH_SHORT).show();
-            }else {
+            } else {
                 token.setCodigoCartao(textCodigoCartao);
                 int radioId = radioGroup.getCheckedRadioButtonId();
                 radioButton = findViewById(radioId);
-                if (radioButton.getText().toString().equals("Nível Padrão")) {
-                    token.setNivelPermissao("Nível Padrão");
-                } else {
-                    token.setNivelPermissao("Nível ADM");
-                }
+                if (radioButton.getText().toString().equals("Padrão"))
+                    token.setNivelPermissao("Padrão");
+                else
+                    token.setNivelPermissao("ADM");
+
                 gerarToken();
             }
         });
@@ -95,19 +94,21 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     buscaUltimoToken = postSnapshot.getValue(TokenUsuarioNovo.class);
                     buscaUltimoToken.setKey(postSnapshot.getKey());
                     ultimoToken.setText(buscaUltimoToken.getToken());
                     ultimoTokenNivel.setText(buscaUltimoToken.getNivelPermissao());
                 }
+                String tokenStatus;
                 if (buscaUltimoToken.isStatus()) {
-                    ultimoTokenStatus.setText("Token já utilizado");
+                    tokenStatus = "Token já utilizado";
                     btGerarToken.setEnabled(true);
-                }else {
+                } else {
                     btGerarToken.setEnabled(false);
-                    ultimoTokenStatus.setText("Token não utilizado, não poderá gerar novo token");
+                    tokenStatus = "Token não utilizado, não poderá gerar novo token";
                 }
+                ultimoTokenStatus.setText(tokenStatus);
             }
 
             @Override

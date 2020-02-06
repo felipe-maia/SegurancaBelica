@@ -2,20 +2,15 @@ package com.example.segurancabelica.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.segurancabelica.R;
 import com.example.segurancabelica.config.ConfigFirebase;
 import com.example.segurancabelica.model.Usuario;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
@@ -59,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
             if (task.isSuccessful()){
                 abrirMenuPincipal();
             }else{
-                String excecao = "";
+                String excecao;
                 try {
                     throw task.getException();
                 }catch (FirebaseAuthInvalidCredentialsException e){

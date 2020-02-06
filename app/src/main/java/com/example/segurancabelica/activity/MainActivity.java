@@ -16,8 +16,6 @@ import com.example.segurancabelica.helper.Base64Custom;
 import com.example.segurancabelica.model.Acessos;
 import com.example.segurancabelica.model.DisparoAlarme;
 import com.example.segurancabelica.model.Usuario;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -87,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
 
                     // Log and toast
                     Log.d("token", token);
-                    //Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
                 });
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
     }
@@ -107,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                             textNome.setText(user.getNome());
                             textPosto.setText(user.getPosto());
 
-                            if (user.getPermissao().equals("Nível ADM")) {
+                            if (user.getPermissao().equals("ADM")) {
                                 btUsuarios.setEnabled(true);
                             }
                         }
@@ -127,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             redirecionaActivityInicial();
         }
-
     }
 
     public void excluirUser() {

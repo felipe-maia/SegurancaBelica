@@ -43,23 +43,28 @@ public class RelatorioDisparoAdapter extends RecyclerView.Adapter<RelatorioDispa
     public void onBindViewHolder(@NonNull DisparoViewHolder holder, int position) {
 
         DisparoAlarme disparoAlarme = listaDisparos.get(position);
-        if (disparoAlarme.isAlarme()) {
-            holder.statusDisparo.setText("Alarme Disparado");
-        } else
-            holder.statusDisparo.setText("Alarme Reativado");
+        String status;
+        if (disparoAlarme.isAlarme())
+            status = "Alarme Disparado";
+        else
+            status = "Alarme Reativado";
+
+        holder.statusDisparo.setText(status);
 
         try {
             Date dataFormatada = dfDataFirebase.parse(String.valueOf(disparoAlarme.getData()));
-            holder.data.setText(dfMostrarData.format(dataFormatada));
+
+            Calendar c = Calendar.getInstance();
+            c.setTime(dataFormatada);
+            c.set(Calendar.HOUR, disparoAlarme.getHora());
+            c.set(Calendar.MINUTE, disparoAlarme.getMin());
+            c.set(Calendar.SECOND, disparoAlarme.getSeg());
+
+            holder.data.setText(dfMostrarData.format(c.getTime()));
+            holder.hora.setText(dfMostraHora.format(c.getTime()));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR, disparoAlarme.getHora());
-        c.set(Calendar.MINUTE, disparoAlarme.getMin());
-        c.set(Calendar.SECOND, disparoAlarme.getSeg());
-
-        holder.hora.setText(dfMostraHora.format(c.getTime()));
     }
 
     @Override

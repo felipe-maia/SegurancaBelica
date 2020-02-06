@@ -85,12 +85,8 @@ public class RelatorioActivity extends AppCompatActivity implements DatePickerDi
             dataF.show(getSupportFragmentManager(), "DATAFINAL");
         });
 
-        btRelatorioAcessos.setOnClickListener(view -> {
-            gerarRelatorioAcessos();
-        });
-        btRelatorioDisparos.setOnClickListener(view -> {
-            gerarRelatorioDisparoAlarme();
-        });
+        btRelatorioAcessos.setOnClickListener(view -> gerarRelatorioAcessos());
+        btRelatorioDisparos.setOnClickListener(view -> gerarRelatorioDisparoAlarme());
     }
 
     public void inicializarVariaveis() {

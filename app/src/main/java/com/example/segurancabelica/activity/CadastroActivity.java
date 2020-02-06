@@ -2,7 +2,6 @@ package com.example.segurancabelica.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -94,7 +93,6 @@ public class CadastroActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     public void buscaUltimoToken(final String textToken) {
@@ -143,7 +141,7 @@ public class CadastroActivity extends AppCompatActivity {
                     tokenDB.child(buscaUltimoToken.getKey()).setValue(buscaUltimoToken);
                     abrirMainActivity();
                 } else {
-                    String excecao = "";
+                    String excecao;
                     try {
                         throw task.getException();
                     } catch (FirebaseAuthWeakPasswordException e) {
