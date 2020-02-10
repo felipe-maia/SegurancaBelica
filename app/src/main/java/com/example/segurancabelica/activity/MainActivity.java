@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         atualizaStatusAlarme();
+        FirebaseMessaging.getInstance().subscribeToTopic("DisparoAlarme");
     }
 
     public void recuperaToken() { //token para envio de notificações
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void excluirUser() {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic("DisparoAlarme");
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         user.delete()
