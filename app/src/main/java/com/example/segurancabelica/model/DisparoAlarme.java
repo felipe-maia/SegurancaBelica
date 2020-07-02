@@ -2,7 +2,8 @@ package com.example.segurancabelica.model;
 
 public class DisparoAlarme {
 
-    private boolean Alarme; //true = disparado, false = nao disparado;
+    private String id;
+    private boolean alarme; //true = disparado, false = nao disparado;
     private int data;
     private int hora;
     private int min;
@@ -11,12 +12,20 @@ public class DisparoAlarme {
     public DisparoAlarme() {
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public boolean isAlarme() {
-        return Alarme;
+        return alarme;
     }
 
     public void setAlarme(boolean alarme) {
-        Alarme = alarme;
+        this.alarme = alarme;
     }
 
     public int getData() {

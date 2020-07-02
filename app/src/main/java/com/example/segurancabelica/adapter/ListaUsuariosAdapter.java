@@ -35,7 +35,6 @@ public class ListaUsuariosAdapter extends RecyclerView.Adapter<ListaUsuariosAdap
     public void onBindViewHolder(@NonNull UsuariosViewHolder holder, int position) {
 
         Usuario usuario = listaUsuarios.get(position);
-
         holder.nome.setText(usuario.getNome());
         holder.posto.setText(usuario.getPosto());
         String cartão = "Cartão: " + usuario.getCodigoCartao();

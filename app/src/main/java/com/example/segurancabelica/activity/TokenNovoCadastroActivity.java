@@ -53,7 +53,7 @@ public class TokenNovoCadastroActivity extends AppCompatActivity {
         btGerarToken = findViewById(R.id.btGerarToken);
         btGerarToken.setOnClickListener(view -> {
 
-            final String textCodigoCartao = codigoCartao.getText().toString();
+            final String textCodigoCartao = codigoCartao.getText().toString().toUpperCase();
 
             if (textCodigoCartao.isEmpty()) {
                 Toast.makeText(TokenNovoCadastroActivity.this, "Preencha o campo código do cartão!", Toast.LENGTH_SHORT).show();

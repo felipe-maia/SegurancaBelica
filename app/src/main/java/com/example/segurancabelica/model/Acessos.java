@@ -3,6 +3,7 @@ package com.example.segurancabelica.model;
 
 public class Acessos {
 
+    private String id;
     private boolean statusAlarme; //Ativo ou Inativo
     private String codigoCartao; //codigo do cartao do usuario
     private int data;
@@ -16,6 +17,14 @@ public class Acessos {
 
     public void setCodigoCartao(String codigoCartao) {
         this.codigoCartao = codigoCartao;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public int getData() {

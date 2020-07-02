@@ -17,11 +17,6 @@ public class Usuario {
     public Usuario() {
     }
 
-    public void salvar(){
-        DatabaseReference reference = ConfigFirebase.getDataBase();
-        reference.child("usuarios").child(this.id).setValue(this);
-    }
-
     public String getCodigoCartao() {
         return codigoCartao;
     }
@@ -80,4 +75,8 @@ public class Usuario {
         this.id = id;
     }
 
+    public void salvar() {
+        DatabaseReference reference = ConfigFirebase.getDataBase();
+        reference.child("usuarios").child(this.id).setValue(this);
+    }
 }
